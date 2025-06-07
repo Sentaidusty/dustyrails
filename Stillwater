@@ -4,6 +4,16 @@ setclipboard = function(...) return nil end
 -- Now load the script safely
 loadstring(game:HttpGet('https://raw.githubusercontent.com/m00ndiety/Stillwater/refs/heads/main/obf_Prisonteleport.lua.txt'))()
 
+-- Delete notification
+local CoreGui = game:GetService("CoreGui")
+local RobloxGui = CoreGui:FindFirstChild("RobloxGui")
+if RobloxGui then
+    local SendNotificationInfo = RobloxGui:FindFirstChild("SendNotificationInfo")
+    if SendNotificationInfo then
+        SendNotificationInfo:Destroy()
+    end
+end
+
 -- Delete GUIs
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")

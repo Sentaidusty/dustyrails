@@ -344,7 +344,7 @@ local function ToggleAutoPickupMelees(state)
         end
         
         -- Set up listener for new tools
-        AutoPickupMelees.Connection = workspace.RuntimeItems.ChildAdded:Connect(function(tool)
+        AutoPickupMelees.Connection = workspace:WaitForChild("RuntimeItems").ChildAdded:Connect(function(tool)
             if AutoPickupMelees.Enabled then
                 pickupMeleeTool(tool)
             end
@@ -783,7 +783,7 @@ local function collectMoneyBags()
     end
 
     -- Add connection for new money bags
-    local childAddedConnection = workspace.RuntimeItems.ChildAdded:Connect(function(v)
+    local childAddedConnection = workspace:WaitForChild("RuntimeItems").ChildAdded:Connect(function(v)
         handleMoneyBag(v)
     end)
     table.insert(AutoCollectMoneyBags.Connections, childAddedConnection)
@@ -793,7 +793,7 @@ local function collectMoneyBags()
         if not AutoCollectMoneyBags.Enabled then
             return
         end
-        for _, v in ipairs(workspace.RuntimeItems:GetChildren()) do
+        for _, v in ipairs(workspace:WaitForChild("RuntimeItems"):GetChildren()) do
             if v:IsA("Model") and v.Name == "Moneybag" and v:FindFirstChild("MoneyBag") then
                 local prompt = v.MoneyBag:FindFirstChildOfClass("ProximityPrompt")
                 if prompt and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
@@ -2012,14 +2012,14 @@ visualTab:Toggle({
             EspMoney()
             
             -- Set up listener for new money items
-            workspace.RuntimeItems.ChildAdded:Connect(function(child)
+            workspace:WaitForChild("RuntimeItems").ChildAdded:Connect(function(child)
                 if child:IsA("Model") then
                     EspMoney()
                 end
             end)
         else
             -- Clean up all money ESP
-            for _, item in pairs(workspace.RuntimeItems:GetChildren()) do
+            for _, item in pairs(workspace:WaitForChild("RuntimeItems"):GetChildren()) do
                 if item:FindFirstChild("MoneyEspGui") then
                     item.MoneyEspGui:Destroy()
                 end

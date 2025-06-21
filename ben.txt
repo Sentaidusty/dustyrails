@@ -1430,6 +1430,116 @@ local function TeleportToTrain()
     end
 end
 
+local function createWeldButton()
+    if game.CoreGui:FindFirstChild("WeldButton") then
+        return
+    end
+
+    local gui = Instance.new("ScreenGui", game.CoreGui)
+    gui.Name = "WeldButton"
+    gui.Enabled = true
+
+    -- Frame
+    local Frame1 = Instance.new("Frame")
+    Frame1.Name = "Frame1"
+    Frame1.Size = UDim2.new(0, 50, 0, 50)
+    Frame1.Position = UDim2.new(0.9, 0, 0.3, 0)
+    Frame1.BackgroundColor3 = Color3.new(0, 0, 0)
+    Frame1.BorderColor3 = Color3.new(0, 0, 0)
+    Frame1.BorderSizePixel = 1
+    Frame1.Active = true
+    Frame1.BackgroundTransparency = 0.85  -- Semi-transparent
+    Frame1.Draggable = true
+    Frame1.Parent = gui
+
+    -- Rounded Corners
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(1, 0)
+    UICorner.Parent = Frame1
+
+    -- Weld Button
+    local TextButton = Instance.new("TextButton")
+    TextButton.Size = UDim2.new(1, 0, 1, 0)
+    TextButton.Position = UDim2.new(0, 0, 0, 0)
+    TextButton.BackgroundColor3 = Color3.new(0, 0, 0)
+    TextButton.BorderColor3 = Color3.new(0, 0, 0)
+    TextButton.BorderSizePixel = 1
+    TextButton.Text = "Weld"
+    TextButton.TextSize = 18
+    TextButton.FontFace = Font.new("rbxassetid://12187372175", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+    TextButton.BackgroundTransparency = 0.5
+    TextButton.TextColor3 = Color3.new(1, 1, 1)
+    TextButton.Parent = Frame1
+
+    -- Button Click Logic
+    TextButton.MouseButton1Click:Connect(function()
+        if workspace:FindFirstChild("RuntimeItems") then
+            for _, item in pairs(workspace.RuntimeItems:GetChildren()) do
+                if item:IsA("Model") and item.PrimaryPart and item.PrimaryPart:FindFirstChild("DragAlignPosition") then
+                    for _, train in pairs(workspace:GetChildren()) do
+                        if train:IsA("Model") and train:FindFirstChild("RequiredComponents") then
+                            local base = train.RequiredComponents:FindFirstChild("Base")
+                            if base and not item.PrimaryPart:FindFirstChild("DragWeldConstraint") then
+                                game:GetService("ReplicatedStorage").Shared.Network.RemoteEvent.RequestWeld:FireServer(item, base)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end)
+
+    -- Button Corner Styling
+    local UICorner2 = Instance.new("UICorner")
+    UICorner2.CornerRadius = UDim.new(1, 0)
+    UICorner2.Parent = TextButton
+
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Color = Color3.new(0, 0, 0)
+    UIStroke.Thickness = 2.5
+    UIStroke.Parent = Frame1
+
+    -- Dragging Logic
+    local UserInputService = game:GetService("UserInputService")
+    local dragging, dragInput, dragStart, startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        Frame1.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+
+    TextButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = Frame1.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    TextButton.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging then
+            update(input)
+        end
+    end)
+end
+
 local function TeleportToTesla()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Sentaidusty/dustyrails/refs/heads/main/Lab'))()
 end
@@ -1502,7 +1612,8 @@ Window:SelectTab(1)
 discordTab:Paragraph({
     Title = "Join Discord To Know Updates!",
     Desc = "Stay updated with the latest features and fixes",
-    Image = "rbxassetid://89771431303510",
+    Image = "rbxassetid://128594193732513",
+    Thumbnail = "rbxassetid://128594193732513",
     Buttons = {
         {
             Title = "Copy Invite",
@@ -1557,7 +1668,7 @@ mainTab:Divider()
 mainTab:Button({
     Title = "Weld Anywhere Button",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/HeadHarse/DeadRails/refs/heads/main/WeldButton"))()
+        createWeldButton()
     end,
     Icon = "wrench"
 })

@@ -1831,36 +1831,27 @@ itemsTab:Section({
     Title = "Bring Items"
 })
 itemsTab:Divider()
-
 itemsTab:Dropdown({
     Title = "Select Item to Bring",
     Values = {"None", "Gold", "Silver", "Coal", "Bandage", "Bond", "Snake Oil"},
     Default = "None",
     Callback = function(selected)
-        getgenv().bringitem = selected
+        if selected ~= "None" then
+            getgenv().bringitem = selected
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/HeadHarse/Things/refs/heads/main/AlotOfThings'))()
+            WindUI:Notify({
+                Title = "Item Bring",
+                Content = "Bringing "..selected,
+                Duration = 3,
+                Icon = "package"
+            })
+        end
     end,
     Icon = "package"
 })
 
-itemsTab:Button({
-    Title = "Bring Item",
-    Callback = function()
-        if getgenv().bringitem and getgenv().bringitem ~= "None" then
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/HeadHarse/Things/refs/heads/main/AlotOfThings'))()
-        else
-            WindUI:Notify({
-                Title = "Error",
-                Content = "Please select an item first",
-                Duration = 3,
-                Icon = "alert-circle"
-            })
-        end
-    end,
-    Icon = "move"
-})
-
 itemsTab:Section({
-    Title = "Items"
+    Title = "Auto"
 })
 itemsTab:Divider()
 
